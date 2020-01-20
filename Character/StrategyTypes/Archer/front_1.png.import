@@ -1,0 +1,34 @@
+[remap]
+
+importer="texture"
+type="StreamTexture"
+path="res://.import/front_1.png-385a6ef23464c4ef7a0fa6a6cd7be6cc.stex"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://Character/StrategyTypes/Archer/front_1.png"
+dest_files=[ "res://.import/front_1.png-385a6ef23464c4ef7a0fa6a6cd7be6cc.stex" ]
+
+[params]
+
+compress/mode=0
+compress/lossy_quality=0.7
+compress/hdr_mode=0
+compress/bptc_ldr=0
+compress/normal_map=0
+flags/repeat=0
+flags/filter=false
+flags/mipmaps=false
+flags/anisotropic=false
+flags/srgb=2
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/HDR_as_SRGB=false
+process/invert_color=false
+stream=false
+size_limit=0
+detect_3d=true
+svg/scale=1.0

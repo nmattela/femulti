@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Battle/Battle.gd" type="Script" id=1]
+[ext_resource path="res://Battle/HealthBar/HealthBar.tscn" type="PackedScene" id=2]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource( 1 )
+
+[node name="AllySprite" type="Sprite" parent="."]
+position = Vector2( 640, 360 )
+scale = Vector2( 8, 8 )
+
+[node name="EnemySprite" type="Sprite" parent="."]
+position = Vector2( 1280, 360 )
+scale = Vector2( 8, 8 )
+
+[node name="EnemyHealthBar" parent="." instance=ExtResource( 2 )]
+margin_left = 1216.0
+margin_top = 720.0
+margin_right = 1344.0
+margin_bottom = 736.0
+rect_scale = Vector2( 4, 4 )
+rect_pivot_offset = Vector2( 64, 8 )
+
+[node name="AllyHealthBar" parent="." instance=ExtResource( 2 )]
+margin_left = 576.0
+margin_top = 720.0
+margin_right = 704.0
+margin_bottom = 736.0
+rect_scale = Vector2( 4, 4 )
+rect_pivot_offset = Vector2( 64, 8 )
