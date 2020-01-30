@@ -1,10 +1,17 @@
 extends Object
 
+#Stats
 var maxHealth = 10
-var maxMovement = 5
+var maxMovement = 20
+var agility = 1
+var strength = 1
+var crit = 1
+
+
 var texture
 
-var directory = "Knight"
+var type = "Knight"
+var teamNumber
 
 var animation = {
 	"direction": Vector2(0, 0),
@@ -13,14 +20,16 @@ var animation = {
 	"maxTimeout": 5
 }
 
-func _init():
-	texture = load("res://Character/StrategyTypes/{dir}/still_0.png".format({
-		"dir": directory
+func _init(teamNo):
+	teamNumber = teamNo
+	texture = load("res://Character/StrategyTypes/{t}/{teamNo}/still_0.png".format({
+		"t": type,
+		"teamNo": teamNumber
 	}))
 	
 func animateMovement(direction):
 	if animation.timeout == 0 or direction == Vector2(0, 0):
-		var newTexture = "res://Character/StrategyTypes/{dir}/{mov}_{c}.png"
+		var newTexture = "res://Character/StrategyTypes/{t}/{teamNo}/{mov}_{c}.png"
 		var right = false
 		if direction == Vector2(0, -1):
 			newTexture = newTexture.format({
@@ -46,7 +55,8 @@ func animateMovement(direction):
 			})
 			
 		newTexture = newTexture.format({
-			"dir": directory,
+			"t": type,
+			"teamNo": teamNumber,
 			"c": animation.cycle
 		})
 			

@@ -3,7 +3,7 @@ extends Node2D
 signal finished
 
 var NothingSelected = load("res://Turn/State/NothingSelected.gd")
-onready var BattleMenu = preload("res://BattleMenu/Menu.tscn")
+onready var BattleMenu = preload("res://HUD/BattleMenu/Menu.tscn")
 
 var myTurn = false
 
@@ -17,6 +17,7 @@ func _ready():
 	team = get_parent()
 	grid = team.grid
 	position = grid.map_to_cell(Vector2(0, 0)).position
+	hideSelector()
 	
 func _process(delta):
 	if myTurn:
@@ -36,6 +37,13 @@ func _process(delta):
 			state().spaceBarPressed()
 		elif Input.is_action_just_pressed("ui_cancel"):
 			returnState()
+			
+		if Input.is_action_just_pressed("ui_plus"):
+			if $Camera.zoom.x > 1 and $Camera.zoom.y > 1:
+				$Camera.zoom -= Vector2(1, 1)
+		elif Input.is_action_just_pressed("ui_minus"):
+			if $Camera.zoom.x < 5 and $Camera.zoom.y < 5:
+				$Camera.zoom += Vector2(1, 1)
 		
 		if state() != null:
 			state().move(delta, direction)
@@ -50,15 +58,24 @@ func isCharacterFinished(character):
 	return charactersFinished[character.characterNumber] or character.dead
 	
 func begin():
+	showSelector()
 	charactersFinished = []
 	myTurn = true
+	$Camera.current = true
 	for character in team.characters:
-		charactersFinished.append(false)
-		character.indicateMovable()
+		if not character.dead:
+			charactersFinished.append(false)
+			character.indicateMovable()
+		else:
+			charactersFinished.append(true)
 	addState(NothingSelected.new(self, grid))
 	
 func end():
+	hideSelector()
 	myTurn = false
+	$Camera.current = false
+	for character in team.characters:
+		character.indicateIdle()
 	emit_signal("finished")
 	
 func addState(newState):
@@ -67,6 +84,7 @@ func addState(newState):
 	stateHistory.push_front(newState)
 	state().resume()
 	state().connect("stateChanged", self, "addState")
+	state().connect("stateReturned", self, "returnState")
 	state().connect("done", self, "onDone")
 	
 func returnState():
@@ -98,18 +116,9 @@ func onDone(character):
 func state():
 	return stateHistory.front()
 	
-func openMenu(config):
-	var battleMenu = BattleMenu.instance()
-	var selectorCell = grid.world_to_cell(position)
-	var rightFree = grid.inBounds(selectorCell.mapPosition + Vector2(1, 0))
-	var menuCell
-	if rightFree:
-		menuCell = grid.map_to_cell(selectorCell.mapPosition + Vector2(1, 0))
-	else:
-		menuCell = grid.map_to_cell(selectorCell.mapPosition - Vector2(1, 0))
-	battleMenu.init(menuCell.position - selectorCell.position - grid.halfTileSize, config)
-	add_child(battleMenu)
-	return battleMenu
+func createMenu(config):
+	return team.hud.createBattleMenu(config)
+	
 	
 func hideSelector():
 	$HookTopLeft.hide()

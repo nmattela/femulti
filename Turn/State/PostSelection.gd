@@ -11,13 +11,13 @@ func _init(c, t, gr).(t, gr):
 
 func openMenu():
 	if menu == null:
-		menu = turn.openMenu({
+		menu = turn.createMenu({
 			"context": self,
 			"buttons": [
-				{"text": "Attack", "fn": "attackPressed"},
-				{"text": "Inventory", "fn": ""},
-				{"text": "Wait", "fn": "waitPressed"},
-				{"text": "Cancel", "fn": ""}
+				{"text": "Attack", "onSelect": "attackPressed"},
+				{"text": "Inventory", "onSelect": ""},
+				{"text": "Wait", "onSelect": "waitPressed"},
+				{"text": "Cancel", "onSelect": "cancelPressed"}
 			]
 		})
 	else:
@@ -35,6 +35,9 @@ func attackPressed():
 func waitPressed():
 	emit_signal("done", character)
 	
+func cancelPressed():
+	emit_signal("stateReturned")
+	
 func standby():
 	standbyState.selectorPosition = turn.position
 	closeMenu()
@@ -43,7 +46,6 @@ func resume():
 	if standbyState.selectorPosition != null:
 		turn.position = standbyState.selectorPosition
 	openMenu()
-	#character.connect("movementFinished", self, "openMenu")
 	
 func destroy():
 	menu.queue_free()

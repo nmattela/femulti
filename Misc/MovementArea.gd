@@ -28,10 +28,10 @@ func _init(gr, ch):
 func calculateMovementArea():
 	var characterPos = grid.world_to_map(character.position)
 	movementArea = []
-	for x in range(-character.maxMovement, character.maxMovement + 1):
+	for x in range(-character.type.maxMovement, character.type.maxMovement + 1):
 		if grid.inBounds(Vector2(characterPos.x + x, 0)):
 			movementArea.append([])
-			var start = -1 * abs(x) + character.maxMovement
+			var start = -1 * abs(x) + character.type.maxMovement
 			for y in range(-start, start + 1):
 				if grid.inBounds(Vector2(characterPos.x + x, characterPos.y + y)):
 					movementArea[movementArea.size() - 1].append(grid.grid[characterPos.x + x][characterPos.y + y])
@@ -71,7 +71,14 @@ func calculateMovementDistanceAndReach():
 func displayMovementArea():
 	for x in range(movementArea.size()):
 		for y in range(movementArea[x].size()):
-			if howToReach[x][y] != null or not movementArea[x][y].passable:
+			var neighbors = getNeighboringCells(Vector2(x, y))
+			var neighborsUnreachable = true
+			for neighbor in neighbors:
+				if isReachable(neighbor) and movementArea[neighbor.x][neighbor.y].tile.passable:
+					neighborsUnreachable = false
+			if movementArea[x][y].content != null and not character.team.isTeamMember(movementArea[x][y].content):
+				movementArea[x][y].indicateMovement(true)
+			elif isReachable(Vector2(x, y)) or not neighborsUnreachable:
 				movementArea[x][y].indicateMovement()
 				
 func clearMovementArea():
@@ -106,7 +113,14 @@ func getNeighboringCells(cell):
 	return returnArray
 	
 func inBounds(cell):
-	return cell.x >= 0 and cell.x < movementArea.size() and cell.y >= 0 and cell.y < movementArea[cell.x].size() and movementArea[cell.x][cell.y].passable
+	print(cell)
+	return \
+	cell.x >= 0 and \
+	cell.x < movementArea.size() \
+	and cell.y >= 0 \
+	and cell.y < movementArea[cell.x].size() \
+	and movementArea[cell.x][cell.y].tile.passable \
+	and (movementArea[cell.x][cell.y].content == null or character.team.isTeamMember(movementArea[cell.x][cell.y].content))
 	
 func isReachable(cell):
 	return howToReach[cell.x][cell.y] != null
@@ -123,6 +137,7 @@ func map_to_movementArea(mapPosition):
 	else:
 		x = -1
 		y = -1
+	
 	return Vector2(x, y)
 	
 func movementArea_to_map(movementAreaPosition):

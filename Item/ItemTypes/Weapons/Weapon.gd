@@ -6,6 +6,8 @@ var attackRange = {
 }
 
 var damage = 0
+var crit = 1
+var miss = 1
 
 func init():
 	pass

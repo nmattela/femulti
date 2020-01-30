@@ -5,6 +5,7 @@ signal finished
 onready var Turn      = preload("res://Turn/Turn.tscn")
 var Knight    = load("res://Character/StrategyTypes/Knight/Knight.gd")
 
+var hud
 var grid
 var characters = []
 
@@ -19,11 +20,13 @@ func _ready():
 	add_child(turn)
 	turn.connect("finished", self, "endTurn")
 	
-func init(teamNo, chs):
+func init(h, teamNo, chs):
+	hud = h
 	teamNumber = teamNo
 	for x in range(chs.size()):
 		add_child(chs[x])
-		chs[x].init(grid, teamNumber, x, Knight)
+		chs[x].init(grid, self, x, Knight)
+		chs[x].indicateIdle()
 		characters.append(chs[x])
 	
 func isTeamMember(character):

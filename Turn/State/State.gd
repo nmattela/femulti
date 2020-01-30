@@ -1,7 +1,9 @@
 extends Object
 
 signal stateChanged
+signal stateReturned
 signal done
+signal moveDone
 
 var movement = {
 	"isMoving": false,
@@ -58,6 +60,9 @@ func move(delta, direction):
 			movement.isMoving = false
 			
 		turn.position += movement.velocity
+		
+		if not movement.isMoving:
+			emit_signal("moveDone", direction)
 		
 func spaceBarPressed():
 	pass

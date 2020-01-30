@@ -9,11 +9,19 @@ var character
 var enemies
 var enemyIndex = -1
 
+var allyCharacterStats
+var enemyCharacterStats
+
 func _init(c, t, gr).(t, gr):
 	character = c
 	attackArea = AttackArea.new(grid, character)
 	enemies = attackArea.getEnemies()
 	movement.maxTimeout = 5
+	
+	allyCharacterStats = turn.team.hud.createCharacterStats(true)
+	enemyCharacterStats = turn.team.hud.createCharacterStats(false)
+	
+	allyCharacterStats.displayStats(character)
 	
 func move(delta, direction):
 	if direction != Vector2(0, 0) and enemies.size() > 0:
@@ -21,6 +29,8 @@ func move(delta, direction):
 			movement.timeout = movement.maxTimeout
 			enemyIndex = int(enemyIndex + direction.x) % enemies.size()
 			turn.position = enemies[enemyIndex].position
+			
+			enemyCharacterStats.displayStats(enemies[enemyIndex])
 		else:
 			movement.timeout -= 1
 	elif movement.timeout > 0:
@@ -32,15 +42,17 @@ func spaceBarPressed():
 	
 func standby():
 	attackArea.clearAttackArea()
-	turn.hideSelector()
+	allyCharacterStats.hide()
+	enemyCharacterStats.hide()
 	
 func resume():
 	attackArea.displayAttackArea()
-	turn.showSelector()
-	
+	allyCharacterStats.show()
+	enemyCharacterStats.show()
 	move(0, Vector2(1, 0))
 	
 func destroy():
 	attackArea.clearAttackArea()
-	turn.hideSelector()
+	allyCharacterStats.queue_free()
+	enemyCharacterStats.queue_free()
 	.destroy()

@@ -7,10 +7,19 @@ var character
 var menu
 var weapons
 
+var allyCharacterStats
+var enemyCharacterStats
+
 func _init(e, c, t, gr).(t, gr):
 	enemy = e
 	character = c
 	weapons = character.inventory.getWeapons()
+	
+	allyCharacterStats = turn.team.hud.createCharacterStats(true)
+	enemyCharacterStats = turn.team.hud.createCharacterStats(false)
+	
+	allyCharacterStats.displayStats(character)
+	enemyCharacterStats.displayStats(enemy)
 	
 func move(delta, direction):
 	pass
@@ -19,13 +28,16 @@ func openMenu():
 	if menu == null:
 		var weaponButtons = []
 		for weapon in weapons:
-			weaponButtons.append({
-				"text": weapon.get_type(),
-				"fn": "beginBattle",
-				"params": [weapon]
-			})
+			var distance = grid.world_to_map(character.position).distance_to(grid.world_to_map(enemy.position))
+			if distance > weapon.attackRange.start and distance <= weapon.attackRange.end:
+				weaponButtons.append({
+					"text": weapon.get_type(),
+					"onSelect": "beginBattle",
+					"onFocus": "displayForecast",
+					"params": [weapon]
+				})
 		
-		menu = turn.openMenu({
+		menu = turn.createMenu({
 			"context": self,
 			"buttons": weaponButtons
 		})
@@ -36,12 +48,48 @@ func closeMenu():
 	menu.hide()
 		
 func standby():
+	allyCharacterStats.hide()
+	enemyCharacterStats.hide()
 	closeMenu()
 	
 func resume():
+	allyCharacterStats.show()
+	enemyCharacterStats.show()
 	openMenu()
 	
+func spaceBarPressed():
+	pass
+	
+func displayForecast(selectedWeapon):
+	
+	var attackMoves = character.calculateAttack(enemy, selectedWeapon)
+	
+	var ally = {
+		"damage": 0,
+		"missChance": 0,
+		"critChance": 0
+	}
+	var enemy = {
+		"damage": 0,
+		"missChance": 0,
+		"critChance": 0
+	}
+
+	for attackMove in attackMoves:
+		if attackMove.attacker == character:
+			enemy.damage += attackMove.damage
+			ally.missChance = attackMove.miss
+			ally.critChance = attackMove.crit
+		else:
+			ally.damage += attackMove.damage
+			enemy.missChance = attackMove.miss
+			enemy.critChance = attackMove.crit
+	
+	allyCharacterStats.displayForecast(ally)
+	enemyCharacterStats.displayForecast(enemy)
+	
 func beginBattle(selectedWeapon):
+	standby()
 	character.inventory.selectedWeapon = selectedWeapon
 	var battle = Battle.instance()
 	turn.add_child(battle)
@@ -53,4 +101,6 @@ func endBattle():
 	
 func destroy():
 	menu.queue_free()
+	allyCharacterStats.queue_free()
+	enemyCharacterStats.queue_free()
 	.destroy()
