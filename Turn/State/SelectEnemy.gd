@@ -1,9 +1,9 @@
 extends "res://Turn/State/State.gd"
 
-var AttackArea = load("res://Misc/AttackArea.gd")
+var TargetArea = load("res://Misc/TargetArea.gd")
 var SelectWeapon = load("res://Turn/State/SelectWeapon.gd")
 
-var attackArea
+var area
 var character
 
 var enemies
@@ -14,14 +14,14 @@ var enemyCharacterStats
 
 func _init(c, t, gr).(t, gr):
 	character = c
-	attackArea = AttackArea.new(grid, character)
-	enemies = attackArea.getEnemies()
+	area = TargetArea.new(grid, character, true)
+	enemies = area.getTargets()
 	movement.maxTimeout = 5
 	
 	allyCharacterStats = turn.team.hud.createCharacterStats(true)
 	enemyCharacterStats = turn.team.hud.createCharacterStats(false)
 	
-	allyCharacterStats.displayStats(character)
+	allyCharacterStats.setCharacter(character)
 	
 func move(delta, direction):
 	if direction != Vector2(0, 0) and enemies.size() > 0:
@@ -30,7 +30,7 @@ func move(delta, direction):
 			enemyIndex = int(enemyIndex + direction.x) % enemies.size()
 			turn.position = enemies[enemyIndex].position
 			
-			enemyCharacterStats.displayStats(enemies[enemyIndex])
+			enemyCharacterStats.setCharacter(enemies[enemyIndex])
 		else:
 			movement.timeout -= 1
 	elif movement.timeout > 0:
@@ -41,18 +41,19 @@ func spaceBarPressed():
 		emit_signal("stateChanged", SelectWeapon.new(enemies[enemyIndex], character, turn, grid))
 	
 func standby():
-	attackArea.clearAttackArea()
+	area.clear()
 	allyCharacterStats.hide()
 	enemyCharacterStats.hide()
 	
 func resume():
-	attackArea.displayAttackArea()
+	area.display()
 	allyCharacterStats.show()
 	enemyCharacterStats.show()
 	move(0, Vector2(1, 0))
 	
 func destroy():
-	attackArea.clearAttackArea()
+	area.clear()
+	area.call_deferred("free")
 	allyCharacterStats.queue_free()
 	enemyCharacterStats.queue_free()
 	.destroy()

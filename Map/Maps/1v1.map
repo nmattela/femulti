@@ -1,0 +1,13 @@
+{
+  "map": [
+    ["Grass", "Grass", "Grass", "Grass", "Grass"],
+    ["Grass", "Grass", "Grass", "Grass", "Grass"],
+    ["Grass", "Grass", "Grass", "Grass", "Grass"],
+    ["Grass", "Grass", "Grass", "Grass", "Grass"],
+    ["Grass", "Grass", "Grass", "Grass", "Grass"],
+  ],
+  "spawnPoints": [
+    [[0, 0]],
+    [[4, 4]]
+  ]
+}

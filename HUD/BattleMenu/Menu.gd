@@ -29,6 +29,3 @@ func show():
 	
 func hide():
 	.hide()
-	
-func onFocusEntered(config):
-	pass

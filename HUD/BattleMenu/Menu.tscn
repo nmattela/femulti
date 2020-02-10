@@ -3,7 +3,7 @@
 [ext_resource path="res://HUD/BattleMenu/Menu.gd" type="Script" id=1]
 
 [node name="Menu" type="VBoxContainer"]
-margin_left = 1792.0
-margin_right = 1920.0
-margin_bottom = 1080.0
+margin_left = 1024.0
+margin_right = 1280.0
+margin_bottom = 720.0
 script = ExtResource( 1 )

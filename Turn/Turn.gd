@@ -93,6 +93,7 @@ func returnState():
 		stateHistory.pop_front()
 		state().resume()
 		state().connect("stateChanged", self, "addState")
+		state().connect("stateReturned", self, "returnState")
 		state().connect("done", self, "onDone")
 		
 func characterDone(character):
@@ -101,14 +102,15 @@ func characterDone(character):
 	character.indicateUnmovable()
 	
 		
-func onDone(character):
-	characterDone(character)
+func onDone(character = null):
+	if character != null:
+		characterDone(character)
 	state().destroy()
 	stateHistory.pop_front()
 	for state in stateHistory:
 		state.call_deferred("free")
 	stateHistory = []
-	if allCharactersFinished():
+	if allCharactersFinished() or character == null:
 		end()
 	else:
 		addState(NothingSelected.new(self, grid))
@@ -119,6 +121,8 @@ func state():
 func createMenu(config):
 	return team.hud.createBattleMenu(config)
 	
+func createInventory(character, config):
+	return team.hud.createInventoryMenu(character, config)
 	
 func hideSelector():
 	$HookTopLeft.hide()

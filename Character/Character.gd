@@ -1,20 +1,24 @@
 extends KinematicBody2D
 
 signal movementFinished
+signal healthUpdated
+signal died
+signal idled
+signal mobilityChanged
 
 onready var Inventory    = load("res://Character/Inventory.gd")
-onready var Sword        = load("res://Item/ItemTypes/Weapons/Sword.gd")
-onready var Longbow      = load("res://Item/ItemTypes/Weapons/Longbow.gd")
-
+onready var Sword        = load("res://Item/Weapons/Sword.gd")
+onready var Longbow      = load("res://Item/Weapons/Longbow.gd")
+onready var Vulnerary    = load("res://Item/Consumables/Vulnerary.gd")
 
 var grid
 var initialCell
 
 var type
 var inventory
+var characterNumber
 var currentCell
 var team
-var characterNumber
 
 #Stats
 var health
@@ -37,19 +41,24 @@ func _ready():
 	$Sprite.material = $Sprite.material.duplicate()
 	z_index = 1
 	
-func init(gr, t, characterNo, strategyType):
-	grid = gr
-	team = t
-	characterNumber = characterNo
-	inventory = Inventory.new()
-	inventory.addItem(Sword.new())
-	inventory.addItem(Longbow.new())
 	
-	type = strategyType.new(team.teamNumber)
+func init(gr, cn, t, strategyType, i):
+	grid = gr
+	characterNumber = cn
+	team = t
+	type = strategyType
+	inventory = i
+	
 	health = type.maxHealth
 	$Sprite.texture = type.texture
 	
+	$HealthBar.init(self)
+	
 	var spawnPoint = grid.getSpawnPoint(team.teamNumber, characterNumber)
+	place(spawnPoint)
+	
+func place(spawnPoint):
+	print(spawnPoint)
 	currentCell = spawnPoint
 	initialCell = spawnPoint
 	position = currentCell.position
@@ -68,21 +77,22 @@ func moveTo(p):
 	
 func indicateIdle():
 	$Sprite.material.set_shader_param("mix_amount", 0.5)
+	emit_signal("idled")
 	
 func indicateUnmovable():
 	$Sprite.material.set_shader_param("mix_amount", 1)
+	emit_signal("mobilityChanged", false)
 	
 func indicateMovable():
 	$Sprite.material.set_shader_param("mix_amount", 0)
+	emit_signal("mobilityChanged", true)
 	
 func die():
 	print("Character from team {x} at {pos} died".format({"x": team.teamNumber, "pos": grid.world_to_cell(position).mapPosition}))
 	dead = true
-	if initialCell.content == self:
-		initialCell.content = null
-	elif grid.world_to_cell(position).content == self:
-		grid.world_to_cell(position).content = null
+	grid.world_to_cell(position).content = null
 	hide()
+	emit_signal("died")
 
 func _process(delta):
 	if movement.targetCell == currentCell and movement.path.size() > 0:
@@ -113,19 +123,32 @@ func _process(delta):
 		position += movement.velocity
 		
 		
+func calculateAssist(target, staff):
+	var moves = []
+	var skill = type.calculateStaffSkill(staff)
+	moves.append({
+		"target": {
+			"heal": staff.heal * skill.target
+		},
+		"ally": {
+			"heal": (staff.heal / 2) * skill.ally
+		}
+	})
+	return moves
+		
 func calculateAttack(enemy, weapon):
 	var moves = []
 	var enemyWeapon = enemy.inventory.getSelectedWeapon()
 	if enemy.type.agility > type.agility * 1.5:
-		moves.append(createMove(enemy, self, enemyWeapon))
-		moves.append(createMove(self, enemy, weapon))
+		moves.append(enemy.createMove(self, enemyWeapon))
+		moves.append(createMove(enemy, weapon))
 	else:
-		moves.append(createMove(self, enemy, weapon))
-		moves.append(createMove(enemy, self, enemyWeapon))
+		moves.append(createMove(enemy, weapon))
+		moves.append(enemy.createMove(self, enemyWeapon))
 	if enemy.type.agility > type.agility * 2:
-		moves.append(createMove(enemy, self, enemyWeapon))
+		moves.append(enemy.createMove(self, enemyWeapon))
 	elif type.agility > enemy.type.agility * 2:
-		moves.append(createMove(self, enemy, weapon))
+		moves.append(createMove(enemy, weapon))
 		
 	var returnMoves = []
 	for move in moves:
@@ -133,20 +156,43 @@ func calculateAttack(enemy, weapon):
 			returnMoves.append(move)
 	return returnMoves
 		
-func createMove(attacker, target, weapon):
+func createMove(enemy, weapon):
+	if weapon != null:
+		var distance = currentCell.mapPosition.distance_to(enemy.currentCell.mapPosition)
+		if distance > weapon.targetRange.start and distance <= weapon.targetRange.end:
+			return {
+				"attacker": self,
+				"target": enemy,
+				"miss": calculateMissChance(enemy, weapon),
+				"crit": type.crit + weapon.crit,
+				"damage": calculateDamage(enemy, weapon),
+				"heal": weapon.heal
+			}
+			
+func calculateMissChance(enemy, weapon):
+	var denom = type.agility + enemy.type.agility
+	var missChance = 1 - (type.agility + 0.2 / denom) + weapon.miss
+	if missChance < 0:
+		return 0
+	elif missChance > 1:
+		return 1
+	else:
+		return missChance
+			
+func calculateDamage(enemy, weapon):
+	var attackerWeaponSkill = type.calculateWeaponSkill(weapon)
+	var targetWeaponProtection = enemy.type.calculateWeaponProtection(weapon)
 	
-	var distance = attacker.currentCell.mapPosition.distance_to(target.currentCell.mapPosition)
-	if distance > weapon.attackRange.start and distance <= weapon.attackRange.end:
-		var missChance = 1 - ((attacker.type.agility / (attacker.type.agility + target.type.agility)) * 2) + ((target.type.agility / (attacker.type.agility + target.type.agility)) / 2) + weapon.miss
-		if missChance < 0:
-			missChance = 0
-		elif missChance > 1:
-			missChance = 1
+	return int(weapon.damage + weapon.damage * (attackerWeaponSkill * targetWeaponProtection))
 		
-		return {
-			"attacker": attacker,
-			"target": target,
-			"miss": missChance if missChance >= 0 else 0,
-			"crit": attacker.type.crit + weapon.crit,
-			"damage": weapon.damage
-		}
+func updateHealth(healthDelta):
+	if health + healthDelta < 0:
+		health = 0
+	elif health + healthDelta > type.maxHealth:
+		health = type.maxHealth
+	else:
+		health += healthDelta
+	if health <= 0:
+		die()
+		
+	emit_signal("healthUpdated", health)

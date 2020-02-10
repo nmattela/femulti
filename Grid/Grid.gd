@@ -7,40 +7,33 @@ var worldBuilder = load("res://Grid/WorldBuilder.gd").new()
 var tileSize = get_cell_size()
 var halfTileSize = tileSize / 2
 
-var gridSize = Vector2(0, 0)
-var spawnPoints = []
+var map
 var grid = []
 
 var gameManager
 
 func _ready():
 	gameManager = get_parent()
-	var file = File.new()
-	file.open("res://Grid/Maps/Castle.json", file.READ)
-	var mapJSON = JSON.parse(file.get_as_text()).result
-	file.close()
-	gridSize = Vector2(mapJSON.map.size(), mapJSON.map[0].size() if mapJSON.size() > 0 else 0)
-	for team in mapJSON.spawnPoints:
-		spawnPoints.append([])
-		for spawnPoint in team:
-			spawnPoints[spawnPoints.size() - 1].append(Vector2(spawnPoint[0], spawnPoint[1]))
 	
-	#worldBuilder.saveToJSON(self, gridSize, "Castle")
+func init(m):
+	map = m
 	
-	for x in range(gridSize.x):
+	#worldBuilder.saveToJSON(self, Vector2(20, 20), "Castle_Small")
+	
+	for x in range(map.size.x):
 		grid.append([])
-		for y in range(gridSize.y):
+		for y in range(map.size.y):
 			var terrain = Terrain.instance()
-			terrain.init(self, Vector2(x, y), tileFactory.createTile(mapJSON.map[x][y]))
+			terrain.init(self, Vector2(x, y), tileFactory.createTile(map.content[x][y]))
 			add_child(terrain)
 			grid[x].append(terrain)
-	update_bitmask_region(Vector2(0, 0), gridSize)
+	update_bitmask_region(Vector2(0, 0), map.size)
 			
 func getSpawnPoint(teamNumber, index):
-	return map_to_cell(spawnPoints[teamNumber][index])
+	return map_to_cell(map.spawnPoints[teamNumber][index])
 	
 func inBounds(coords):
-	return coords.x < gridSize.x and coords.x >= 0 and coords.y < gridSize.x and coords.y >= 0
+	return coords.x < map.size.x and coords.x >= 0 and coords.y < map.size.x and coords.y >= 0
 			
 func isVacant(cell):
 	return inBounds(cell.mapPosition)

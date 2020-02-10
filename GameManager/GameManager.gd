@@ -11,21 +11,17 @@ var main
 func _ready():
 	main = get_parent()
 	
+func init(map, teamSetups):
 	var grid = Grid.instance()
 	add_child(grid)
 	grid.name = "Grid"
+	grid.init(map)
 	
-	for x in range(2):
-		var team = Team.instance()
-		$Grid.add_child(team)
-		teams.append(team)
-		team.init(
-			main.get_node("HUD"),
-			x,
-			[Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance(), Character.instance()]
-		)
-		team.connect("finished", self, "nextTurn")
-		
+	for team in teamSetups:
+		grid.add_child(team.team)
+		teams.append(team.team)
+		team.team.addToGrid(grid, main.get_node("HUD"), team.characterSetups)
+		team.team.connect("finished", self, "nextTurn")
 	teams[0].beginTurn()
 	
 func nextTurn(teamNumber):

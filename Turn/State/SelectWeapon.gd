@@ -18,8 +18,8 @@ func _init(e, c, t, gr).(t, gr):
 	allyCharacterStats = turn.team.hud.createCharacterStats(true)
 	enemyCharacterStats = turn.team.hud.createCharacterStats(false)
 	
-	allyCharacterStats.displayStats(character)
-	enemyCharacterStats.displayStats(enemy)
+	allyCharacterStats.setCharacter(character)
+	enemyCharacterStats.setCharacter(enemy)
 	
 func move(delta, direction):
 	pass
@@ -29,7 +29,7 @@ func openMenu():
 		var weaponButtons = []
 		for weapon in weapons:
 			var distance = grid.world_to_map(character.position).distance_to(grid.world_to_map(enemy.position))
-			if distance > weapon.attackRange.start and distance <= weapon.attackRange.end:
+			if distance > weapon.targetRange.start and distance <= weapon.targetRange.end:
 				weaponButtons.append({
 					"text": weapon.get_type(),
 					"onSelect": "beginBattle",
@@ -66,11 +66,13 @@ func displayForecast(selectedWeapon):
 	
 	var ally = {
 		"damage": 0,
+		"heal": 0,
 		"missChance": 0,
 		"critChance": 0
 	}
 	var enemy = {
 		"damage": 0,
+		"heal": 0,
 		"missChance": 0,
 		"critChance": 0
 	}
@@ -78,10 +80,12 @@ func displayForecast(selectedWeapon):
 	for attackMove in attackMoves:
 		if attackMove.attacker == character:
 			enemy.damage += attackMove.damage
+			ally.heal += attackMove.heal
 			ally.missChance = attackMove.miss
 			ally.critChance = attackMove.crit
 		else:
 			ally.damage += attackMove.damage
+			enemy.heal += attackMove.heal
 			enemy.missChance = attackMove.miss
 			enemy.critChance = attackMove.crit
 	

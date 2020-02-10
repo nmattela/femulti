@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Character/Character.gd" type="Script" id=1]
 [ext_resource path="res://Character/CharacterMaterial.tres" type="Material" id=2]
+[ext_resource path="res://HUD/HealthBar/HealthBar.tscn" type="PackedScene" id=3]
 
 [node name="Character" type="KinematicBody2D"]
 z_index = 1
@@ -12,3 +13,10 @@ material = ExtResource( 2 )
 position = Vector2( 0, -16 )
 scale = Vector2( 2, 2 )
 z_index = 2
+
+[node name="HealthBar" parent="." instance=ExtResource( 3 )]
+margin_left = -25.6
+margin_top = 32.0
+margin_right = 102.4
+margin_bottom = 48.0
+rect_scale = Vector2( 0.4, 0.5 )

@@ -8,6 +8,7 @@ func saveToJSON(world, size, name):
 	for x in size.x:
 		json.map.append([])
 		for y in size.y:
+			print(x, y)
 			var tileName = ""
 			var tileId = world.get_cell(x, y)
 			if tileId == 0:
@@ -24,5 +25,6 @@ func saveToJSON(world, size, name):
 				tileName = "Plank"
 			json.map[json.map.size() - 1].append(tileName)
 	var file = File.new()
-	file.open("res://Grid/Maps/Castle.json", file.WRITE)
+	file.open("res://Map/Maps/{n}.map".format({"n": name}), file.WRITE)
+	file.store_string(JSON.print(json))
 	file.close()

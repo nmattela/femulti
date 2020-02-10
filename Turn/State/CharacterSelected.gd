@@ -29,16 +29,12 @@ func onMoveDone(direction):
 func spaceBarPressed():
 	if movementArea.inBounds(movementArea.map_to_movementArea(turn.mapPosition())):
 		if path.size() == 0:
-			#print("Size is 0 so calculating path")
 			path = movementArea.calculatePath(turn.position)
-		#print(path)
 		character.moveTo(path)
-		#print("Moving...")
 		standbyState.path = movementArea.calculatePath(turn.position)
 		character.connect("movementFinished", self, "onMovementFinished")
 	
 func onMovementFinished():
-	print("Movement finished!")
 	emit_signal("stateChanged", PostSelection.new(character, turn, grid))
 	
 func standby():

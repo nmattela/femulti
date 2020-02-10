@@ -5,6 +5,8 @@ signal finished
 onready var Turn      = preload("res://Turn/Turn.tscn")
 var Knight    = load("res://Character/StrategyTypes/Knight/Knight.gd")
 
+var Character = load("res://Character/Character.tscn")
+
 var hud
 var grid
 var characters = []
@@ -13,21 +15,24 @@ var teamNumber = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	grid = get_parent()
-		
+	pass
+	
+func addToGrid(gr, h, characterSetups):
+	grid = gr
+	hud = h
+	for idx in range(characters.size()):
+		add_child(characters[idx])
+		characters[idx].init(grid, idx, self, characterSetups[idx].type, characterSetups[idx].inventory)
+		characters[idx].indicateIdle()
 	var turn = Turn.instance()
 	turn.name = "Turn"
 	add_child(turn)
 	turn.connect("finished", self, "endTurn")
-	
-func init(h, teamNo, chs):
-	hud = h
+		
+func init(teamNo, map):
 	teamNumber = teamNo
-	for x in range(chs.size()):
-		add_child(chs[x])
-		chs[x].init(grid, self, x, Knight)
-		chs[x].indicateIdle()
-		characters.append(chs[x])
+	for character in map.maxPlayers:
+		characters.append(Character.instance())
 	
 func isTeamMember(character):
 	return getTeamMemberIndex(character) != -1

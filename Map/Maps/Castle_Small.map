@@ -1,0 +1,28 @@
+{
+  "map":[
+    ["Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Wall","Grass","Grass","Grass","Grass","Grass","Water","Water","Water","Water","Grass"],
+    ["Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Wall","Wall","Wall","Wall","Wall","Grass","Water","Water","Water","Water","Grass"],
+    ["Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Grass","Water","Water","Water","Water","Grass"],
+    ["Wall","Wall","Wall","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Water","Water","Water","Water","Grass","Grass"],
+    ["Plank","Plank","Wall","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Water","Water","Water","Water","Grass","Grass"],
+    ["Plank","Plank","Wall","Plank","Plank","Wall","Plank","Plank","Plank","Wall","Wall","Wall","Wall","Wall","Water","Water","Water","Grass","Grass","Grass"],
+    ["Plank","Plank","Wall","Plank","Plank","Wall","Plank","Plank","Plank","Plank","Dirt","Dirt","Bridge","Bridge","Bridge","Bridge","Bridge","Dirt","Dirt","Dirt"],
+    ["Plank","Plank","Plank","Plank","Plank","Wall","Plank","Plank","Plank","Plank","Dirt","Dirt","Bridge","Bridge","Bridge","Bridge","Bridge","Dirt","Dirt","Dirt"],
+    ["Plank","Plank","Plank","Plank","Plank","Wall","Plank","Plank","Plank","Plank","Dirt","Dirt","Bridge","Bridge","Bridge","Bridge","Bridge","Dirt","Dirt","Dirt"],
+    ["Plank","Plank","Wall","Plank","Plank","Wall","Wall","Wall","Wall","Wall","Wall","Wall","Water","Water","Water","Water","Grass","Grass","Dirt","Dirt"],
+    ["Plank","Plank","Wall","Plank","Plank","Plank","Plank","Plank","Plank","Wall","Plank","Wall","Water","Water","Water","Water","Grass","Grass","Dirt","Dirt"],
+    ["Plank","Plank","Wall","Plank","Plank","Plank","Plank","Plank","Plank","Wall","Wall","Wall","Water","Water","Water","Grass","Grass","Grass","Dirt","Dirt"],
+    ["Wall","Wall","Wall","Wall","Wall","Wall","Plank","Plank","Plank","Wall","Water","Water","Water","Water","Water","Grass","Grass","Grass","Dirt","Dirt"],
+    ["Wall","Plank","Plank","Plank","Wall","Grass","Dirt","Dirt","Dirt","Water","Water","Water","Water","Water","Grass","Grass","Grass","Grass","Dirt","Dirt"],
+    ["Wall","Plank","Plank","Plank","Wall","Grass","Dirt","Dirt","Dirt","Water","Water","Water","Water","Grass","Wall","Wall","Wall","Wall","Plank","Plank"],
+    ["Wall","Plank","Plank","Plank","Wall","Grass","Bridge","Bridge","Bridge","Water","Water","Water","Grass","Grass","Wall","Plank","Plank","Wall","Plank","Plank"],
+    ["Wall","Wall","Wall","Wall","Wall","Grass","Bridge","Bridge","Bridge","Water","Water","Grass","Grass","Grass","Wall","Plank","Plank","Wall","Plank","Plank"],
+    ["Grass","Grass","Grass","Grass","Water","Water","Bridge","Bridge","Bridge","Water","Grass","Grass","Grass","Grass","Wall","Wall","Wall","Wall","Plank","Plank"],
+    ["Grass","Grass","Water","Water","Water","Water","Bridge","Bridge","Bridge","Grass","Grass","Grass","Grass","Grass","Plank","Plank","Plank","Plank","Plank","Plank"],
+    ["Grass","Water","Water","Water","Water","Water","Dirt","Dirt","Dirt","Dirt","Dirt","Dirt","Dirt","Dirt","Plank","Plank","Plank","Plank","Plank","Plank"]
+  ],
+  "spawnPoints":[
+    [[1, 1], [1, 5], [3, 3], [0, 7], [9, 3], [10, 7], [11, 3], [11, 5]],
+    [[14, 18], [14, 19], [11, 18], [11, 19], [18, 14], [19, 14], [18, 11], [19, 11]]
+  ]
+}

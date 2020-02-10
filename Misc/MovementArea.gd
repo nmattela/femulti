@@ -76,9 +76,7 @@ func displayMovementArea():
 			for neighbor in neighbors:
 				if isReachable(neighbor) and movementArea[neighbor.x][neighbor.y].tile.passable:
 					neighborsUnreachable = false
-			if movementArea[x][y].content != null and not character.team.isTeamMember(movementArea[x][y].content):
-				movementArea[x][y].indicateMovement(true)
-			elif isReachable(Vector2(x, y)) or not neighborsUnreachable:
+			if isReachable(Vector2(x, y)) and not neighborsUnreachable:
 				movementArea[x][y].indicateMovement()
 				
 func clearMovementArea():
@@ -113,10 +111,8 @@ func getNeighboringCells(cell):
 	return returnArray
 	
 func inBounds(cell):
-	print(cell)
-	return \
-	cell.x >= 0 and \
-	cell.x < movementArea.size() \
+	return cell.x >= 0 \
+	and cell.x < movementArea.size() \
 	and cell.y >= 0 \
 	and cell.y < movementArea[cell.x].size() \
 	and movementArea[cell.x][cell.y].tile.passable \

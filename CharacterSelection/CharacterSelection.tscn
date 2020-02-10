@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://CharacterSelection/Theme.tres" type="Theme" id=1]
+[ext_resource path="res://CharacterSelection/CharacterSelection.gd" type="Script" id=2]
+[ext_resource path="res://CharacterSelection/CharacterSelectionScreen/CharacterSelectionScreen.tscn" type="PackedScene" id=3]
+
+[node name="CharacterSelection" type="HBoxContainer"]
+margin_right = 1284.0
+margin_bottom = 720.0
+rect_min_size = Vector2( 1280, 720 )
+theme = ExtResource( 1 )
+custom_constants/separation = 0
+script = ExtResource( 2 )
+
+[node name="BlueTeam" parent="." instance=ExtResource( 3 )]
+
+[node name="RedTeam" parent="." instance=ExtResource( 3 )]
+margin_left = 640.0
+margin_right = 1280.0

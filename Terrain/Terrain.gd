@@ -6,6 +6,7 @@ var arrowTop = load("res://Terrain/arrow/arrow_top.png")
 
 const red  = "aaae0707"
 const blue = "aa006fb9"
+const green = "aa06b900"
 
 var content = null
 
@@ -57,13 +58,21 @@ func drawPath(from, to):
 		elif sum == Vector2(-1, -1):
 			$Arrow.rotate(3*PI/2)
 	$Arrow.show()
+	
+func indicate(c):
+	var color
+	if c == "red":
+		color = red
+	elif c == "blue":
+		color = blue
+	elif c == "green":
+		color = green
+	
+	$Indication.color = color
+	$Indication.show()
 			
-func indicateMovement(forceUnpassable = false):
-	if not tile.passable or forceUnpassable:
-		$Indication.color = red
-	elif tile.passable:
-		$Indication.color = blue
-		
+func indicateMovement():
+	$Indication.color = blue
 	$Indication.show()
 	
 func clearIndications():
